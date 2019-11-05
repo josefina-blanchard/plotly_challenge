@@ -24,26 +24,33 @@ function buildCharts(sample) {
     // @TODO: Build a Pie Chart
     // HINT: You will need to use slice() to grab the top 10 sample_values,
     // otu_ids, and labels (10 each).
+  async function makePlot(){
+    const defaultURL = "/samples/<sample>";
+    let data = await d3.json(defaultURL);
+    data = data("sample_values").slice[0,10];
+    let labels = data("otu_ids").slice[0,10];
+    Plotly.plot("pie", data, labels);
+  };
 }
 
 function init() {
-  // Grab a reference to the dropdown select element
-  var selector = d3.select("#selDataset");
+// Grab a reference to the dropdown select element
+var selector = d3.select("#selDataset");
 
-  // Use the list of sample names to populate the select options
-  d3.json("/names").then((sampleNames) => {
-    sampleNames.forEach((sample) => {
-      selector
-        .append("option")
-        .text(sample)
-        .property("value", sample);
-    });
+// Use the list of sample names to populate the select options
+d3.json("/names").then((sampleNames) => {
+sampleNames.forEach((sample) => {
+selector
+.append("option")
+.text(sample)
+.property("value", sample);
+});
 
-    // Use the first sample from the list to build the initial plots
-    const firstSample = sampleNames[0];
-    buildCharts(firstSample);
-    buildMetadata(firstSample);
-  });
+// Use the first sample from the list to build the initial plots
+const firstSample = sampleNames[0];
+buildCharts(firstSample);
+buildMetadata(firstSample);
+});
 }
 
 function optionChanged(newSample) {
