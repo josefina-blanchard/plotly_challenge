@@ -1,5 +1,14 @@
 function buildMetadata(sample) {
-
+  d3.json(`/metadata/${sample}`).then((data) =>{
+  console.log(data);
+  var panel = d3.select("#sample-metadata");
+  panel.html("");
+  Object.entries(data).forEach(([
+    key, value]) => {
+      console.log(key, value);
+      panel.append("h5").text(`${key}: ${value}`);
+    }) 
+  })
   // @TODO: Complete the following function that builds the metadata panel
 
   // Use `d3.json` to fetch the metadata for a sample
@@ -18,20 +27,39 @@ function buildMetadata(sample) {
 function buildCharts(sample) {
 
   // @TODO: Use `d3.json` to fetch the sample data for the plots
+  d3.json(`/samples/${sample}`).then((data) => {
+    console.log(data.otu_ids);
+    let outid = data.otu_ids;
+    let outlab = data.otu_labels;
+    let samplesval = data.sample_values;
 
     // @TODO: Build a Bubble Chart using the sample data
-
+    const bubbleData = [{
+      x : outid,
+      y : samplesval,
+      text : outlab,
+      type: "scatter",
+      mode: "markers"
+    }];
+      Plotly.newPlot("bubble", bubbleData);
     // @TODO: Build a Pie Chart
     // HINT: You will need to use slice() to grab the top 10 sample_values,
     // otu_ids, and labels (10 each).
-  async function makePlot(){
-    const defaultURL = "/samples/<sample>";
-    let data = await d3.json(defaultURL);
-    data = data("sample_values").slice[0,10];
-    let labels = data("otu_ids").slice[0,10];
-    Plotly.plot("pie", data, labels);
-  };
-}
+      const pieData = [{
+        values: samplesval.slice(0,10),
+        labels: outid.slice(0,10),
+        type: "pie"
+      }];
+      
+      var layout = {
+        height: 400,
+        width: 500,
+        title: ""
+      };
+      
+      Plotly.newPlot("pie", pieData, layout);
+    });
+    }; 
 
 function init() {
 // Grab a reference to the dropdown select element
